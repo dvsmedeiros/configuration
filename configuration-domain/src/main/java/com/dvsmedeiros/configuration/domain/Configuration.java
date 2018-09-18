@@ -21,7 +21,14 @@ public class Configuration extends DomainSpecificEntity {
 	private String value;
 	@ManyToOne(cascade = { CascadeType.MERGE, CascadeType.REMOVE, CascadeType.REFRESH, CascadeType.DETACH })
 	private ConfigurationGroup group;
-
+	
+	public Configuration() {
+	}
+	
+	public Configuration(String value) {
+		this.value = value;
+	}
+	
 	@JsonIgnore
 	public int getIntValue() {
 		return Integer.parseInt(value);
