@@ -1,5 +1,9 @@
 package com.dvsmedeiros.configuration.core.impl;
 
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
@@ -28,9 +32,23 @@ public class ConfigurationFacade extends ApplicationFacade<Configuration> implem
 		aFilter.getEntity().setCode(code);
 		aFilter.getEntity().setGroup(configGroup);
 
-		Configuration config = dao.filter(aFilter);
+		List<Configuration> configs = dao.filter(aFilter);
 
-		return config != null ? config : new Configuration(defaultValue);
+		return configs != null && !configs.isEmpty() ? configs.get(0) : new Configuration(defaultValue);
+	}
+
+	@Override
+	public Map<String, Configuration> find(String group) {
+
+		ConfigurationGroup configGroup = new ConfigurationGroup();
+		configGroup.setCode(group);
+
+		Filter<Configuration> aFilter = new Filter<Configuration>(Configuration.class);
+		aFilter.getEntity().setGroup(configGroup);
+
+		List<Configuration> configs = dao.filter(aFilter);
+
+		return configs.stream().collect(Collectors.toMap(Configuration::getCode, config -> config));
 	}
 
 }

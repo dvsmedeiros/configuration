@@ -1,5 +1,7 @@
 package com.dvsmedeiros.configuration.core.impl;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import javax.persistence.Query;
@@ -16,7 +18,7 @@ import com.google.common.base.Strings;
 public class ConfigurationDAO extends GenericDAO<Configuration> implements IConfigurationDAO {
 
 	@Override
-	public Configuration filter(Filter<Configuration> filter) {
+	public List<Configuration> filter(Filter<Configuration> filter) {
 
 		boolean hasFilter = filter != null && filter.getEntity() != null;
 
@@ -46,6 +48,6 @@ public class ConfigurationDAO extends GenericDAO<Configuration> implements IConf
 		}
 
 		List<Configuration> resultList = query.getResultList();
-		return resultList != null && !resultList.isEmpty() ? resultList.get(0) : null;
+		return resultList != null ? resultList : new ArrayList<>();
 	}
 }
