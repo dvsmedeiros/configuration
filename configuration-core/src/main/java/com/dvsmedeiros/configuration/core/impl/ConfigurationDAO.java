@@ -1,10 +1,10 @@
 package com.dvsmedeiros.configuration.core.impl;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
+import java.util.stream.Stream;
 
-import javax.persistence.Query;
+import javax.persistence.TypedQuery;
 
 import org.springframework.stereotype.Component;
 
@@ -18,7 +18,7 @@ import com.google.common.base.Strings;
 public class ConfigurationDAO extends GenericDAO<Configuration> implements IConfigurationDAO {
 
 	@Override
-	public List<Configuration> filter(Filter<Configuration> filter) {
+	public Stream<Configuration> filter(Filter<Configuration> filter) {
 
 		boolean hasFilter = filter != null && filter.getEntity() != null;
 
@@ -36,7 +36,7 @@ public class ConfigurationDAO extends GenericDAO<Configuration> implements IConf
 			jpql.append("AND c.group.code = :group ");
 		}
 
-		Query query = em.createQuery(jpql.toString());
+		TypedQuery<Configuration> query = em.createQuery(jpql.toString(), Configuration.class);
 
 		if (hasFilter && !Strings.isNullOrEmpty(filter.getEntity().getCode())) {
 			jpql.append("AND c.code = :code ");
@@ -46,8 +46,8 @@ public class ConfigurationDAO extends GenericDAO<Configuration> implements IConf
 		if (hasFilter && !Strings.isNullOrEmpty(filter.getEntity().getGroup().getCode())) {
 			query.setParameter("group", filter.getEntity().getGroup().getCode());
 		}
-
-		List<Configuration> resultList = query.getResultList();
-		return resultList != null ? resultList : new ArrayList<>();
+		
+		List<Configuration> result = query.getResultList();
+		return result != null ? result.stream() : Stream.of();
 	}
 }
