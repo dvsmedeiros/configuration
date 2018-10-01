@@ -1,8 +1,10 @@
 package com.dvsmedeiros.configuration.core.impl;
 
-import java.util.List;
+import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -23,7 +25,7 @@ public class ConfigurationFacade extends ApplicationFacade<Configuration> implem
 	private IConfigurationDAO dao;
 
 	@Override
-	public Configuration find(String group, String code, String defaultValue) {
+	public Optional<Configuration> find(String group, String code, String defaultValue) {
 
 		ConfigurationGroup configGroup = new ConfigurationGroup();
 		configGroup.setCode(group);
@@ -32,9 +34,20 @@ public class ConfigurationFacade extends ApplicationFacade<Configuration> implem
 		aFilter.getEntity().setCode(code);
 		aFilter.getEntity().setGroup(configGroup);
 
-		List<Configuration> configs = dao.filter(aFilter);
+		Stream<Configuration> configs = dao.filter(aFilter);
+		
+		Configuration configuration = new Configuration(defaultValue);
 
-		return configs != null && !configs.isEmpty() ? configs.get(0) : new Configuration(defaultValue);
+		configs.findFirst().ifPresent(config -> {			
+			configuration.setActive(config.getActive());
+			configuration.setCode(config.getCode());
+			configuration.setDescription(config.getDescription());
+			configuration.setGroup(config.getGroup());
+			configuration.setInsertionDate(config.getInsertionDate());
+			configuration.setValue(config.getValue());
+		});
+					
+		return Optional.of(configuration);
 	}
 
 	@Override
@@ -46,9 +59,12 @@ public class ConfigurationFacade extends ApplicationFacade<Configuration> implem
 		Filter<Configuration> aFilter = new Filter<Configuration>(Configuration.class);
 		aFilter.getEntity().setGroup(configGroup);
 
-		List<Configuration> configs = dao.filter(aFilter);
+		Stream<Configuration> configs = dao.filter(aFilter);
 
-		return configs.stream().collect(Collectors.toMap(Configuration::getCode, config -> config));
+		if (Optional.ofNullable(configs).isPresent()) {
+			return configs.collect(Collectors.toMap(Configuration::getCode, config -> config));
+		}
+		return new HashMap<>();
 	}
 
 }
