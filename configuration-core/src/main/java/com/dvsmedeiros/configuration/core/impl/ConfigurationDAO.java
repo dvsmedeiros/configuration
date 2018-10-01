@@ -1,6 +1,5 @@
 package com.dvsmedeiros.configuration.core.impl;
 
-import java.util.List;
 import java.util.Optional;
 import java.util.stream.Stream;
 
