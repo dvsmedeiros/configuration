@@ -46,8 +46,7 @@ public class ConfigurationDAO extends GenericDAO<Configuration> implements IConf
 		if (hasFilter && !Strings.isNullOrEmpty(filter.getEntity().getGroup().getCode())) {
 			query.setParameter("group", filter.getEntity().getGroup().getCode());
 		}
-		
-		List<Configuration> result = query.getResultList();
-		return result != null ? result.stream() : Stream.of();
+
+		return Optional.ofNullable(query.getResultList().stream()).orElse(Stream.of());
 	}
 }
