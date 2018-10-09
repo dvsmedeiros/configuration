@@ -9,9 +9,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import com.dvsmedeiros.configuration.domain.ConfigurationGroup;
 import com.dvsmedeiros.rest.rest.controller.DomainSpecificEntityController;
 
-@SuppressWarnings("rawtypes")
 @Controller
-@RequestMapping("configuration/group")
+@RequestMapping("${server.controller.prefix}/configuration/group")
 public class ConfigurationGroupController extends DomainSpecificEntityController<ConfigurationGroup> {
 
 	public ConfigurationGroupController() {
@@ -20,7 +19,7 @@ public class ConfigurationGroupController extends DomainSpecificEntityController
 
 	@Override
 	@CacheEvict(value = "cacheConfigurationsGroup", allEntries = true)
-	public ResponseEntity updateEntity(@RequestBody ConfigurationGroup entity) {
+	public ResponseEntity<?> updateEntity(@RequestBody ConfigurationGroup entity) {
 		return super.updateEntity(entity);
 	}
 

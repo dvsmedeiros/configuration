@@ -11,7 +11,7 @@ import com.dvsmedeiros.rest.rest.controller.DomainSpecificEntityController;
 
 @SuppressWarnings("rawtypes")
 @Controller
-@RequestMapping("configuration")
+@RequestMapping("${server.controller.prefix}/configuration")
 public class ConfigurationController extends DomainSpecificEntityController<Configuration> {
 
 	public ConfigurationController() {
